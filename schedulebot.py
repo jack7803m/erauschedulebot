@@ -193,11 +193,11 @@ async def uploads(ctx):
     
     
 @client.command(name = 'checkclass',
-                help = f'Usage: {cmd_pfx}checkclass <courseID>\nExample: {cmd_pfx}checkclass "MA 241"\nReturns the list of people taking a given class.\nFor the \'courseId\' in the command, do use spaces and add quotes. (ie. "MA 241" instead of MA 241 or MA241) ')
-async def checkclass(ctx, courseid = 'append'):
+                help = f'Usage: {cmd_pfx}checkclass <courseID>\nExample: {cmd_pfx}checkclass MA 241\nReturns the list of people taking a given class.')
+async def checkclass(ctx, *, courseid = 'append'):
     #check if user input anything
     if courseid == 'append':
-        await ctx.send(f'Please append the courseID to that command. Ex: {cmd_pfx}checkclass MA241')
+        await ctx.send(f'Please append the courseID to that command. Ex: {cmd_pfx}checkclass MA 241')
         return
     #check if the courseID input is strictly alphanumeric
     allowed_chars = set("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ")
