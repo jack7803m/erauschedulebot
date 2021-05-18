@@ -20,16 +20,19 @@ def extract_data(filename):
     studentid1 = re.sub('ID:\s+', '', lines[1])
     studentid = re.sub('\s+', '', studentid1)
 
-    table = tabula.read_pdf(filename, pages = 1, output_format = "json")[0]
-    #this will only read one table - if the schedule goes to 2 pages it wont read the second one
-    i = 0
+    table_list = tabula.read_pdf(filename, pages = 'all', output_format = "json", lattice=True)
+    
+    #this should iterate over each table in the list of extracted tables
+    #for each table in the list and for each row in each table, add appropriate data to main dict
     class_and_section_dict = {}
-    for lis in table['data']:
-        if i > 0:
-            filtered_courseID = re.sub('\r', ' ', lis[0]['text'])
-            filtered_sectionID = re.sub('\r', ' ', lis[1]['text'])
-            class_and_section_dict[filtered_courseID] = filtered_sectionID
-        i += 1
+    for table in table_list:
+        i = 0
+        for lis in table['data']:
+            if i > 0:
+                filtered_courseID = re.sub('\r', ' ', lis[0]['text'])
+                filtered_sectionID = re.sub('\r', ' ', lis[1]['text'])
+                class_and_section_dict[filtered_courseID] = filtered_sectionID
+            i += 1
     
     extracted = {'studentid': studentid, 'name': name, 'classes': class_and_section_dict}
     return extracted
