@@ -64,7 +64,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if client.user.mentioned_in(message) or ':catuwu:' in message:
+    if client.user.mentioned_in(message) or ':catuwu:' in message.content:
         customemoji = client.get_emoji(841142074593378344)
         await message.add_reaction(customemoji)
     await client.process_commands(message)
