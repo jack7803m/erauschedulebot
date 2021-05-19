@@ -1,5 +1,4 @@
 from discord.ext.commands import Bot
-from discord import utils
 import discord
 
 import os
@@ -27,15 +26,16 @@ import dbmanagement
 # done//filtered out in scheduling.py extract_data function//- better filtering before the classes get into mongo's database - no \r
 # done//findStudentsWithClass function in dbmanagment.py//- checkclass function for dbmanagement
 # done - react to @mentions with an emote of some sort
-#  - database discord.id for drew   /////// i've spent like an hour looking at all the shit i'd have to change so im not doing this, the database now saves discord ids as well though so it could be implemented later
-#    - case for user does not have id in database
+# done - database discord.id for drew   /////// i've spent like an hour looking at all the shit i'd have to change so im not doing this, the database now saves discord ids as well though so it could be implemented later
+#   done - case for user does not have id in database
 #
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
+help_command = discord.ext.commands.DefaultHelpCommand(no_category = 'Commands')
 cmd_pfx = '+'
-client = Bot(command_prefix='+')
+client = Bot(command_prefix='+', help_command=help_command)
 
 customemoji = client.get_emoji(841142074593378344)
 
@@ -55,6 +55,7 @@ async def makeEmbed(title, description, unformatted_data):
         response_embed.add_field(name=field_title, value=field_value, inline=False)
     
     return response_embed
+
 
 @client.event
 async def on_ready():
@@ -125,37 +126,38 @@ async def uploadschedule(ctx):
     mongo.closeConnection()
 
 
-@client.command(name='checksections', 
-                help = f'Usage: {cmd_pfx}checksections <id> \nExample: {cmd_pfx}checksections 1234567\nChecks the bot\'s database for anyone who has the same class section as you.')
-async def checksections(ctx, studentid = 'append'):
+@client.command(name='checkschedule', 
+                help = f'Usage: {cmd_pfx}checkschedule \nChecks the bot\'s database for anyone who will be in your classes.\nOptionally, you can add a studentid like \'+checkschedule 1234567\' and it will return the same thing, but for that student id.')
+async def checkschedule(ctx, studentid = 'optional'):
     #basically just checking if student id is entered first, and then also if it is even a number at all
-    if studentid == 'append': 
-        await ctx.send('Please append your student number to that command. Ex: +checksections 1234567')
-        return
-    try:
-        studentid = int(studentid)
-    except ValueError:
-        await ctx.send('Please input your student id number only.')
-        return
-    
-    #this could be done somwhere else but this is fine
-    #this needs to be a string to be properly understood by the database because it is stored as a string
-    studentid = str(studentid)
+    if studentid == 'optional': 
+        lookup_type = 'discord_id'
+        lookup_index = ctx.message.author.id
+    else:
+        try:
+            lookup_type = 'studentid'
+            lookup_index = int(studentid)
+            # the student id is stored as a string in the db so it needs to be converted back
+            lookup_index = str(lookup_index)
+        except ValueError:
+            await ctx.send('If you use the optional student ID argument, please only input your student ID number.')
+            return
+
     
     mongo = dbmanagement.MongoManage()
     try:
-        unformatted_response = mongo.findSimilarSection(studentid)
-        student_name = mongo.getName(studentid)
+        unformatted_response = mongo.findSimilarSection(lookup_index = lookup_index, lookup_type = lookup_type)
+        student_name = mongo.getName(lookup_index = lookup_index, lookup_type = lookup_type)
         response_embed = await makeEmbed(title=f'"{student_name}" Sections', description=f'List of classes and sections of "{student_name}" and other students taking the same ones.', unformatted_data=unformatted_response)
     except FileNotFoundError:
-        await ctx.send('That student ID does not seem to be in the database.')
+        await ctx.send('No entries found in the database.')
         return
 
     mongo.closeConnection()
     await ctx.send(embed=response_embed)
 
 
-@client.command(name='checkclasses', 
+'''@client.command(name='checkclasses', 
                 help = f'Usage: {cmd_pfx}checkclasses <id> \nExample: {cmd_pfx}checkclasses 1234567\nChecks the bot\'s database for anyone who has the same class as you, regardless of section/professor/time.')
 async def checkclasses(ctx, studentid = 'append'):
     if studentid == 'append': 
@@ -172,24 +174,14 @@ async def checkclasses(ctx, studentid = 'append'):
     mongo = dbmanagement.MongoManage()
     try:
         unformatted_response = mongo.findSimilarClass(studentid)
-        student_name = mongo.getName(studentid)
+        student_name = mongo.getName(studentid, lookup_type='studentid')
         response_embed = await makeEmbed(title=f'"{student_name}" Classes', description=f'List of classes of "{student_name}" and other students taking those classes.', unformatted_data=unformatted_response)
     except FileNotFoundError:
         await ctx.send('That student ID does not seem to be in the database.')
         return
         
     mongo.closeConnection()
-    await ctx.send(embed=response_embed)
-    
-    
-@client.command(name = 'uploads',
-                help = 'Returns the amount of schedules/uploads in the database.')
-async def uploads(ctx):
-    mongo = dbmanagement.MongoManage()
-    count = mongo.amountOfDocs()
-    mongo.closeConnection()
-    
-    await ctx.send(f'A total of {count} students have uploaded their schedules.')
+    await ctx.send(embed=response_embed)'''
     
     
 @client.command(name = 'checkclass',
@@ -217,5 +209,16 @@ async def checkclass(ctx, *, courseid = 'append'):
     
     mongo.closeConnection()
     await ctx.send(embed=response_embed)
+    
+    
+@client.command(name = 'uploads',
+                help = f'Usage: {cmd_pfx}uploads \nReturns the amount of schedules/uploads in the database.')
+async def uploads(ctx):
+    mongo = dbmanagement.MongoManage()
+    count = mongo.amountOfDocs()
+    mongo.closeConnection()
+    
+    await ctx.send(f'A total of {count} students have uploaded their schedules.')
+   
     
 client.run(TOKEN)

@@ -6,21 +6,24 @@ class MongoManage:
         db = self.client.scheduledb
         self.schedules = db.schedules
         
+
     def checkExisting(self, newdata):
         id_to_find = newdata['studentid']
         query_result = self.schedules.find_one({'studentid': id_to_find})
         if query_result != None:
             self.schedules.update_one(
                 {"studentid": id_to_find},
-                {"$set": newdata})
+                newdata)
             print(f"New data was updated: {newdata}")
             return True
         return False
         
+
     def insertNew(self, newdata):
         self.schedules.insert_one(newdata)
         print(f"New data was inserted: {newdata}")
-              
+        
+    #currently unused afaik  
     def findSimilarClass(self, studentid):
         current_data = self.schedules.find_one({'studentid': studentid})
         #check to see if user exists, if not raise random exception
@@ -43,8 +46,9 @@ class MongoManage:
         #dictionary returned is formatted as:  {classID}:[{name} // @{discord name}, {name} // @{discord name}...] 
         return full_output_dict
     
-    def findSimilarSection(self, studentid):
-        current_data = self.schedules.find_one({'studentid': studentid})
+
+    def findSimilarSection(self, lookup_index, lookup_type):
+        current_data = self.schedules.find_one({lookup_type: lookup_index})
         #check to see if user exists, if not raise random exception
         if current_data == None: 
             raise FileNotFoundError
@@ -67,10 +71,12 @@ class MongoManage:
         #dictionary returned is formatted as:  {classID : sectionID}:[{name} // discordNickname @{discord name}, {name} // discordNickname @{discord name}...]
         return full_output_dict
     
+
     def amountOfDocs(self):
         amount_of_docs = self.schedules.find({'studentid': {'$exists': 1}}).count()
         return amount_of_docs
         
+
     def findStudentsWithClass(self, classid):
         #check to see if the user even input a course code that exists in the system
         exists = self.schedules.find({f'classes.{classid}': {'$exists': 1}})
@@ -89,9 +95,11 @@ class MongoManage:
         #dictionary returned is formatted as:  {classID}:[{name} // @{discord name}, {name} // @{discord name}...] 
         return full_output_dict
     
-    def getName(self, studentid):
-        student_name = self.schedules.find_one({'studentid': studentid}, {'name': 1})
+
+    def getName(self, lookup_index, lookup_type):
+        student_name = self.schedules.find_one({lookup_type: lookup_index}, {'name': 1})
         return student_name['name']
+
 
     def closeConnection(self):
         self.client.close()
