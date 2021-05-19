@@ -64,7 +64,7 @@ class MongoManage:
                 if student['name'] == canonical_name or student == None:
                     pass
                 else:
-                    names_list.append(student['name'])
+                    names_list.append(student['name'] + '   //   ' + student['saved_nickname'] + '   (@' + student['username'] + ')')
             #concat class and section name for clarity
             class_section_string = f'{class_name} : {class_section_correlation[class_name]}'
             full_output_dict[class_section_string] = names_list
