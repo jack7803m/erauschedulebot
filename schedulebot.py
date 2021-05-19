@@ -60,13 +60,11 @@ async def makeEmbed(title, description, unformatted_data):
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord')
-    for user in client.users:
-        print(user)
     
 
 @client.event
 async def on_message(message):
-    if client.user.mentioned_in(message):
+    if client.user.mentioned_in(message) or ':catuwu:' in message:
         customemoji = client.get_emoji(841142074593378344)
         await message.add_reaction(customemoji)
     await client.process_commands(message)
