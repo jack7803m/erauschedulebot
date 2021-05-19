@@ -11,7 +11,7 @@ class MongoManage:
         id_to_find = newdata['studentid']
         query_result = self.schedules.find_one({'studentid': id_to_find})
         if query_result != None:
-            self.schedules.update_one(
+            self.schedules.replace_one(
                 {"studentid": id_to_find},
                 newdata)
             print(f"New data was updated: {newdata}")
