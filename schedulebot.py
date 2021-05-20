@@ -148,7 +148,7 @@ async def checkschedule(ctx, studentid = 'optional'):
         student_name = mongo.getName(lookup_index = lookup_index, lookup_type = lookup_type)
         response_embed = await makeEmbed(title=f'"{student_name}" Sections', description=f'List of classes and sections of "{student_name}" and other students taking the same ones.', unformatted_data=unformatted_response)
     except FileNotFoundError:
-        await ctx.send('No entries found in the database.')
+        await ctx.send('No entries found in my database. Please upload your schedule; try: \'+help uploadschedule\'')
         return
 
     mongo.closeConnection()
@@ -218,5 +218,14 @@ async def uploads(ctx):
     
     await ctx.send(f'A total of {count} students have uploaded their schedules.')
    
+'''   work in progress
+import mcinterface
+RCON_PASSWORD = os.getenv('RCON_PASSWORD')
+@client.command(name = 'whitelist',
+                help = f'Note: Used for community minecraft server\nUsage: {cmd_pfx}whitelist <username> \nWhitelists the given username on the minecraft server.')
+async def whitelist(ctx, username = 'append'):
+    
+    
+    response = await mcinterface.whitelistUser(username=username, rcon_password=RCON_PASSWORD)'''
     
 client.run(TOKEN)
