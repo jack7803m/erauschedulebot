@@ -3,3 +3,4 @@ python-dotenv
 pymongo
 tabula-py
 pymupdf
+mcrcon

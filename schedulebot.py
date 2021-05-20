@@ -218,14 +218,20 @@ async def uploads(ctx):
     
     await ctx.send(f'A total of {count} students have uploaded their schedules.')
    
-'''   work in progress
-import mcinterface
+
+
+'''import mcinterface
 RCON_PASSWORD = os.getenv('RCON_PASSWORD')
 @client.command(name = 'whitelist',
-                help = f'Note: Used for community minecraft server\nUsage: {cmd_pfx}whitelist <username> \nWhitelists the given username on the minecraft server.')
-async def whitelist(ctx, username = 'append'):
+                help = f'Note: Used for community minecraft server\nUsage: {cmd_pfx}whitelist <username> bedrock/java\nEx: {cmd_pfx}whitelist Jack7803M java\nWhitelists the given username on the minecraft server.')
+async def whitelist(ctx, username = None, game_type = 'java'):
     
     
-    response = await mcinterface.whitelistUser(username=username, rcon_password=RCON_PASSWORD)'''
+    response = await mcinterface.whitelistUser(username=username, rcon_password=RCON_PASSWORD, game_type = game_type.lower())
+    if response == False:
+        await ctx.send('Error: Bad username format.')
+    elif response == True:
+        await ctx.send('Success!')'''
+
     
 client.run(TOKEN)
