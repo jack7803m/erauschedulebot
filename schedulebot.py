@@ -118,7 +118,7 @@ async def uploadschedule(ctx):
         await ctx.send("It seems like you are already in the database! Your information has been updated.")
     else:
         mongo.insertNew(newdbdata)
-        await ctx.send(f"Successfully uploaded! Run {cmd_pfx}checksections <studentid> or {cmd_pfx}checkclasses <studentid> to see if anyone else who has uploaded has your classes.")
+        await ctx.send(f"Successfully uploaded! Run {cmd_pfx}checkschedule to see if anyone else who has uploaded will be in your classes!")
         
     #if everything passes up to this point, all the necessary data should be loaded into the database so it can be closed
     mongo.closeConnection()
