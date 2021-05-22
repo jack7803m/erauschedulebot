@@ -66,7 +66,7 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         pass
-    elif client.user.mentioned_in(message) or ':catuwu:' in message.content or discord.utils.get(message.author.roles, name='Weeb') is not None:
+    elif client.user.mentioned_in(message) or ':catuwu:' in message.content: #or discord.utils.get(message.author.roles, name='Weeb') is not None
         customemoji = client.get_emoji(841142074593378344)
         await message.add_reaction(customemoji)
     await client.process_commands(message)
