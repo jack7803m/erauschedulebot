@@ -206,9 +206,7 @@ async def uploads(ctx):
     botmessage = await ctx.send(f'A total of {count} students have uploaded their schedules.')
     
     #sad reaction for low count
-    print(len(ctx.guild.members))
-    print(len([m for m in ctx.guild.members if not m.bot]))
-    if count < 0.20 * len([m for m in ctx.guild.members if not m.bot]):
+    if count < 0.20 * ctx.guild.member_count:
         sadyeehaw = client.get_emoji(840632884914028544)
         await ctx.message.add_reaction(sadyeehaw)
         await botmessage.add_reaction(sadyeehaw)
