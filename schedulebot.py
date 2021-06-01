@@ -52,7 +52,7 @@ async def on_message(message):
     if message.author == client.user:
         pass
     elif client.user.mentioned_in(message) or ':catuwu:' in message.content: #or discord.utils.get(message.author.roles, name='Weeb') is not None
-        catuwu = await client.get_emoji(841142074593378344)
+        catuwu = client.get_emoji(841142074593378344)
         await message.add_reaction(catuwu)
     await client.process_commands(message)
 
@@ -206,8 +206,10 @@ async def uploads(ctx):
     botmessage = await ctx.send(f'A total of {count} students have uploaded their schedules.')
     
     #sad reaction for low count
+    print(len(ctx.guild.members))
+    print(len([m for m in ctx.guild.members if not m.bot]))
     if count < 0.20 * len([m for m in ctx.guild.members if not m.bot]):
-        sadyeehaw = await client.get_emoji(840632884914028544)
+        sadyeehaw = client.get_emoji(840632884914028544)
         await ctx.message.add_reaction(sadyeehaw)
         await botmessage.add_reaction(sadyeehaw)
         
