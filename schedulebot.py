@@ -21,8 +21,8 @@ help_command = discord.ext.commands.DefaultHelpCommand(no_category = 'Commands')
 cmd_pfx = '+'
 client = Bot(command_prefix='+', help_command=help_command)
 
-catuwu = client.get_emoji(841142074593378344)
-sadyeehaw = client.get_emoji(840632884914028544)
+#catuwu = client.get_emoji(841142074593378344)
+#sadyeehaw = client.get_emoji(840632884914028544)
 
 #should this be here? nope, but im not making a new file for it. fuck you
 async def makeEmbed(title, description, unformatted_data):
@@ -52,7 +52,7 @@ async def on_message(message):
     if message.author == client.user:
         pass
     elif client.user.mentioned_in(message) or ':catuwu:' in message.content: #or discord.utils.get(message.author.roles, name='Weeb') is not None
-        #catuwu = client.get_emoji(841142074593378344)
+        catuwu = await client.get_emoji(841142074593378344)
         await message.add_reaction(catuwu)
     await client.process_commands(message)
 
@@ -207,6 +207,7 @@ async def uploads(ctx):
     
     #sad reaction for low count
     if count < 0.20 * len([m for m in ctx.guild.members if not m.bot]):
+        sadyeehaw = await client.get_emoji(840632884914028544)
         await ctx.message.add_reaction(sadyeehaw)
         await botmessage.add_reaction(sadyeehaw)
         
