@@ -12,22 +12,6 @@ import scheduling
 import dbmanagement
 
 ### need to do 
-# done - check for user already in system   
-# done - check for bad document (NotImplementedError raised from scheduling processor)
-# done - delete pdf if it throws an error on consistency template check
-# done - find user's id number, find the classes they are in, and check all other users for similar classes/sections
-#   done - this needs to return the other user's name, class, and section, formatted as:  - Name: class (Section: section)
-#   done - this also needs to check that it's not returning the user who is asking. user knows that he/she is in his/her own class
-# done - write error case for id number not in system
-# done - write error case for no matching classes (this might work natively with 'None')
-# done - log the username and nickname of the person who uploaded the schedule 
-# done - log the filename the schedule was saved as
-# done - embeds for better/prettier formatting
-# done//filtered out in scheduling.py extract_data function//- better filtering before the classes get into mongo's database - no \r
-# done//findStudentsWithClass function in dbmanagment.py//- checkclass function for dbmanagement
-# done - react to @mentions with an emote of some sort
-# done - database discord.id for drew   /////// i've spent like an hour looking at all the shit i'd have to change so im not doing this, the database now saves discord ids as well though so it could be implemented later
-#   done - case for user does not have id in database
 #
 
 load_dotenv()
@@ -37,7 +21,8 @@ help_command = discord.ext.commands.DefaultHelpCommand(no_category = 'Commands')
 cmd_pfx = '+'
 client = Bot(command_prefix='+', help_command=help_command)
 
-customemoji = client.get_emoji(841142074593378344)
+catuwu = client.get_emoji(841142074593378344)
+sadyeehaw = client.get_emoji(840632884914028544)
 
 #should this be here? nope, but im not making a new file for it. fuck you
 async def makeEmbed(title, description, unformatted_data):
@@ -67,8 +52,8 @@ async def on_message(message):
     if message.author == client.user:
         pass
     elif client.user.mentioned_in(message) or ':catuwu:' in message.content: #or discord.utils.get(message.author.roles, name='Weeb') is not None
-        customemoji = client.get_emoji(841142074593378344)
-        await message.add_reaction(customemoji)
+        #catuwu = client.get_emoji(841142074593378344)
+        await message.add_reaction(catuwu)
     await client.process_commands(message)
 
 
@@ -218,10 +203,15 @@ async def uploads(ctx):
     count = mongo.amountOfDocs()
     mongo.closeConnection()
     
-    await ctx.send(f'A total of {count} students have uploaded their schedules.')
+    botmessage = await ctx.send(f'A total of {count} students have uploaded their schedules.')
+    
+    #sad reaction for low count
+    if count < 0.20 * len([m for m in ctx.guild.members if not m.bot]):
+        await ctx.message.add_reaction(sadyeehaw)
+        await botmessage.add_reaction(sadyeehaw)
+        
    
-
-
+#if i ever get around to adding a whitelist to the minecraft server, this will be useful
 '''import mcinterface
 RCON_PASSWORD = os.getenv('RCON_PASSWORD')
 @client.command(name = 'whitelist',
