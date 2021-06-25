@@ -8,11 +8,13 @@ class MongoManage:
         
 
     def checkExisting(self, newdata):
-        id_to_find = newdata['studentid']
-        query_result = self.schedules.find_one({'studentid': id_to_find})
+        index = 'discord_id'
+        
+        id_to_find = newdata[index]
+        query_result = self.schedules.find_one({index: id_to_find})
         if query_result != None:
             self.schedules.replace_one(
-                {"studentid": id_to_find},
+                {index: id_to_find},
                 newdata)
             print(f"New data was updated: {newdata}")
             return True
