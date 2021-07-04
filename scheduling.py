@@ -25,18 +25,28 @@ def extract_data(filename):
     
     #this should iterate over each table in the list of extracted tables
     #for each table in the list and for each row in each table, add appropriate data to main dict
-    class_and_section_dict = {}
+    class_and_section_list = []
     for table in table_list:
         i = 0
         for lis in table['data']:
             if i > 0:
                 filtered_courseID = re.sub('\r', ' ', lis[0]['text'])
                 filtered_sectionID = re.sub('\r', ' ', lis[1]['text'])
-                class_and_section_dict[filtered_courseID] = filtered_sectionID
+                current_class_and_section = {}
+                
+                current_class_and_section['course'] = filtered_courseID
+                current_class_and_section['section'] = filtered_sectionID
+                class_and_section_list.append(current_class_and_section)
+
+
                 if campus == 'none':
                     if re.match(r'.*DB.*', filtered_sectionID) is not None: campus = 'daytona'
                     elif re.match(r'.*PC.*', filtered_sectionID) is not None: campus = 'prescott' 
             i += 1
     
-    extracted = {'studentid': studentid, 'name': name, 'classes': class_and_section_dict, 'campus': campus}
+    extracted = {'studentid': studentid, 'name': name, 'classes': class_and_section_list, 'campus': campus}
     return extracted
+
+#%%
+
+# %%
