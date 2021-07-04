@@ -229,10 +229,10 @@ async def uploads(ctx, *, campus = 'all'):
         botmessage = await ctx.send(f"A total of {count} students at \"{campus}\" have uploaded their schedules.")
     
     #sad reaction for low count
-    if count < 0.20 * ctx.guild.member_count:
-        sadyeehaw = client.get_emoji(840632884914028544)
-        await ctx.message.add_reaction(sadyeehaw)
-        await botmessage.add_reaction(sadyeehaw)
+    #if count < 0.20 * ctx.guild.member_count:
+    #    sadyeehaw = client.get_emoji(840632884914028544)
+    #    await ctx.message.add_reaction(sadyeehaw)
+    #    await botmessage.add_reaction(sadyeehaw)
         
    
 #if i ever get around to adding a whitelist to the minecraft server, this will be useful
