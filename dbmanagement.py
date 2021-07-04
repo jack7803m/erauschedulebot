@@ -4,7 +4,7 @@ class MongoManage:
     def __init__(self):
         self.client = MongoClient()
         db = self.client.scheduledb
-        self.schedules = db.tempschedule
+        self.schedules = db.schedules
         self.test = db.tempschedule
         
 
@@ -106,47 +106,3 @@ class MongoManage:
 
     def closeConnection(self):
         self.client.close()
-
-#     def databaseRework(self):
-#         all_classids = self.test.find({}, {'classes': 1})
-#         unique_classes = []
-#         for student in all_classids:
-#             for course in student['classes'].keys():
-#                 filtered_course = re.sub('\r', ' ', course)
-#                 if filtered_course not in unique_classes:
-#                     unique_classes.append(filtered_course)
-#         print(unique_classes)
-#         daytona_people = []
-#         prescott_people = []
-#         for course in unique_classes:
-#             db_people = self.test.find({f'classes.{course}': {'$regex': '.*DB.*'}}, {'name': 1, 'studentid': 1, 'discord_id': 1})
-#             pc_people = self.test.find({f'classes.{course}': {'$regex': '.*PC.*'}}, {'name': 1, 'studentid': 1, 'discord_id': 1})
-#             for student in db_people:
-#                 if student['discord_id'] not in daytona_people:
-#                     daytona_people.append(student['discord_id'])
-#             for student in pc_people:
-#                 if student['discord_id'] not in prescott_people:
-#                     prescott_people.append(student['discord_id'])
-        
-#         for discord in daytona_people:
-#             self.test.update_one({'discord_id': discord}, {'$set': {'campus': 'daytona'}})
-#         for discord in prescott_people:
-#             self.test.update_one({'discord_id': discord}, {'$set': {'campus': 'prescott'}})
-
-#     def fixDB(self):
-#         all_docs = self.test.find({})
-#         for student_doc in all_docs:
-#             temp_student_courses = []
-#             for course in student_doc['classes']:
-#                 filtered_course = re.sub('\r', ' ', course)
-#                 filtered_section = re.sub('\r', ' ', student_doc['classes'][course])
-#                 current = {'course': filtered_course, 'section': filtered_section}
-#                 temp_student_courses.append(current)
-#             print(temp_student_courses)
-#             self.test.update_one({'discord_id': student_doc['discord_id']}, {'$set': {'classes': temp_student_courses}})
-
-
-# import re
-# mongo = MongoManage()
-# mongo.fixDB()
-# mongo.closeConnection()

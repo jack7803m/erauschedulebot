@@ -152,33 +152,6 @@ async def checkschedule(ctx, studentid = 'optional'):
 
     mongo.closeConnection()
     await ctx.send(embed=response_embed)
-
-
-'''@client.command(name='checkclasses', 
-                help = f'Usage: {cmd_pfx}checkclasses <id> \nExample: {cmd_pfx}checkclasses 1234567\nChecks the bot\'s database for anyone who has the same class as you, regardless of section/professor/time.')
-async def checkclasses(ctx, studentid = 'append'):
-    if studentid == 'append': 
-        await ctx.send(f'Please append your student number to that command. Ex: {cmd_pfx}checkclasses 1234567')
-        return
-    try:
-        studentid = int(studentid)
-    except ValueError:
-        await ctx.send('Please input your student id number only.')
-        return
-    
-    studentid = str(studentid)
-    
-    mongo = dbmanagement.MongoManage()
-    try:
-        unformatted_response = mongo.findSimilarClass(studentid)
-        student_name = mongo.getName(studentid, lookup_type='studentid')
-        response_embed = await makeEmbed(title=f'"{student_name}" Classes', description=f'List of classes of "{student_name}" and other students taking those classes.', unformatted_data=unformatted_response)
-    except FileNotFoundError:
-        await ctx.send('That student ID does not seem to be in the database.')
-        return
-        
-    mongo.closeConnection()
-    await ctx.send(embed=response_embed)'''
     
     
 @client.command(name = 'checkclass',
@@ -201,7 +174,7 @@ async def checkclass(ctx, *, courseid = 'append'):
         unformatted_response = mongo.findStudentsWithClass(courseid)
         response_embed = await makeEmbed(title=f'Students taking {courseid}', description='', unformatted_data=unformatted_response)
     except SyntaxError:
-        await ctx.send(f'The courseID "{courseid}" does not seem to exist in the database.')
+        await ctx.send(f'The courseID "{courseid}" does not seem to exist in the database. Either nobody is taking the class or it was typed incorrectly.')
         return
     
     mongo.closeConnection()
@@ -224,9 +197,9 @@ async def uploads(ctx, *, campus = 'all'):
     mongo.closeConnection()
     
     if campus == 'all':
-        botmessage = await ctx.send(f'A total of {count} students have uploaded their schedules.')
+        await ctx.send(f'A total of {count} students have uploaded their schedules.')
     else:
-        botmessage = await ctx.send(f"A total of {count} students at \"{campus}\" have uploaded their schedules.")
+        await ctx.send(f"A total of {count} students at \"{campus}\" have uploaded their schedules.")
     
     #sad reaction for low count
     #if count < 0.20 * ctx.guild.member_count:
