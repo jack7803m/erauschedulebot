@@ -74,8 +74,11 @@ class MongoManage:
         return full_output_dict
     
 
-    def amountOfDocs(self):
-        amount_of_docs = self.schedules.find({'studentid': {'$exists': 1}}).count()
+    def amountOfDocs(self, search_value):
+        if search_value is None:
+            amount_of_docs = self.schedules.find({'studentid': {'$exists': 1}},{'name': 1}).count()
+        else:
+            amount_of_docs = self.schedules.find({'campus': search_value},{'name': 1}).count()
         return amount_of_docs
         
 

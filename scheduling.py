@@ -16,11 +16,12 @@ def extract_data(filename):
             raise NotImplementedError
         pdftext = pdfdata[0].getText()
     lines = pdftext.split('\n')
-    name = re.sub('Name:\s+', '', lines[0])
-    studentid1 = re.sub('ID:\s+', '', lines[1])
-    studentid = re.sub('\s+', '', studentid1)
+    name = re.sub(r'Name:\s+', '', lines[0])
+    studentid1 = re.sub(r'ID:\s+', '', lines[1])
+    studentid = re.sub(r'\s+', '', studentid1)
 
     table_list = tabula.read_pdf(filename, pages = 'all', output_format = "json", lattice=True)
+    campus = 'none'
     
     #this should iterate over each table in the list of extracted tables
     #for each table in the list and for each row in each table, add appropriate data to main dict
@@ -32,7 +33,10 @@ def extract_data(filename):
                 filtered_courseID = re.sub('\r', ' ', lis[0]['text'])
                 filtered_sectionID = re.sub('\r', ' ', lis[1]['text'])
                 class_and_section_dict[filtered_courseID] = filtered_sectionID
+                if campus is 'none':
+                    if re.match(r'.*DB.*', filtered_sectionID) is not None: campus = 'daytona'
+                    elif re.match(r'.*PC.*', filtered_sectionID) is not None: campus = 'prescott' 
             i += 1
     
-    extracted = {'studentid': studentid, 'name': name, 'classes': class_and_section_dict}
+    extracted = {'studentid': studentid, 'name': name, 'classes': class_and_section_dict, 'campus': campus}
     return extracted

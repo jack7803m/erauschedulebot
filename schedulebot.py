@@ -98,7 +98,19 @@ async def uploadschedule(ctx):
     newdbdata['username'] = ctx.message.author.name
     newdbdata['saved_nickname'] = ctx.message.author.display_name
     newdbdata['discord_id'] = ctx.message.author.id
-    
+
+    #get the user's roles, perform role checking to ensure that his/her campus role is correct
+    role_names = [role.name for role in ctx.message.author.roles]
+    if "Prescott Student" in role_names and "Daytona Student" in role_names:
+        await ctx.send("Your roles are set incorrectly, unless you are somehow registered at both campuses. Please fix your roles so I can function properly :)")
+        return
+    elif "Prescott Student" in role_names: campus = 'prescott'
+    elif "Daytona Student" in role_names: campus = 'daytona'
+    else: await ctx.send(f"You do not have a campus role! Please set your campus in <#832434178523791391>"); return
+    if campus is not newdbdata['campus']:
+            ctx.send(f"Your campus role conflicts with your schedule. Please update your campus role or upload the correct schedule.")
+            return
+
     #attempt to add the data to the database; perform check first and update if necessary, otherwise insert data
     mongo = dbmanagement.MongoManage()
     if mongo.checkExisting(newdbdata) is True:
@@ -198,12 +210,23 @@ async def checkclass(ctx, *, courseid = 'append'):
     
 @client.command(name = 'uploads',
                 help = f'Usage: {cmd_pfx}uploads \nReturns the amount of schedules/uploads in the database.')
-async def uploads(ctx):
+async def uploads(ctx, *, campus = 'all'):
+    if campus in ['daytona', 'db', 'daytona beach', 'florida', 'fl', 'best campus']:
+        search_index = 'daytona'
+    elif campus in ['prescott', 'pc', 'arizona', 'az']:
+        search_index = 'prescott'
+    elif campus in ['all', 'total']:
+        search_index = None
+    else: await ctx.send(f"Campus \"{campus}\" is not currently a valid campus name."); return
+
     mongo = dbmanagement.MongoManage()
-    count = mongo.amountOfDocs()
+    count = mongo.amountOfDocs(search_index)
     mongo.closeConnection()
     
-    botmessage = await ctx.send(f'A total of {count} students have uploaded their schedules.')
+    if campus == 'all':
+        botmessage = await ctx.send(f'A total of {count} students have uploaded their schedules.')
+    else:
+        botmessage = await ctx.send(f"A total of {count} students at \"{campus}\" have uploaded their schedules.")
     
     #sad reaction for low count
     if count < 0.20 * ctx.guild.member_count:
