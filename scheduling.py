@@ -33,7 +33,7 @@ def extract_data(filename):
                 filtered_courseID = re.sub('\r', ' ', lis[0]['text'])
                 filtered_sectionID = re.sub('\r', ' ', lis[1]['text'])
                 class_and_section_dict[filtered_courseID] = filtered_sectionID
-                if campus is 'none':
+                if campus == 'none':
                     if re.match(r'.*DB.*', filtered_sectionID) is not None: campus = 'daytona'
                     elif re.match(r'.*PC.*', filtered_sectionID) is not None: campus = 'prescott' 
             i += 1
