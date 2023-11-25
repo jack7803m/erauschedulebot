@@ -1,0 +1,3 @@
+.env
+schedules/*
+!schedules/example.pdf
